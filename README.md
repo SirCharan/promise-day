@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Promise Day ✨
+
+A cute, whimsical web app for you and your person to share promises in a single room. Create or join with a 6-character code; add promises as “Her” or “Him”; they sync in realtime.
+
+## Tech Stack
+
+- **Next.js 16** (App Router) + React 19
+- **Tailwind CSS** + custom CSS (see `reference.html` for design system)
+- **Firebase**: Anonymous Auth, Firestore (realtime), Analytics
+- **Fonts**: Chewy, Nunito, Sniglet (Google Fonts)
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Environment variables
+
+Copy `.env.example` to `.env.local` and fill in your Firebase config (or use the existing `.env.local` if present):
+
+```bash
+cp .env.example .env.local
+```
+
+Required: `NEXT_PUBLIC_FIREBASE_*` keys from [Firebase Console](https://console.firebase.google.com) (project **promiseday**). Enable **Anonymous Authentication** and **Firestore**.
+
+### 3. Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Create a room, share the code, add promises.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Path | Purpose |
+|------|--------|
+| `src/app/page.tsx` | Landing: Create Room / Join Room |
+| `src/app/[roomId]/page.tsx` | Room page: tabs, promise list, cloud input |
+| `src/app/components/` | LandingDecor, RoomDecor, CloudInput, PromiseCard |
+| `src/lib/firebase.ts` | Auth, Firestore, room code, realtime subscription |
+| `reference.html` | Design reference (styling, cloud, cards) |
+| `instructions.md` | Build guidelines for AI / contributors |
 
-## Learn More
+## Deploy (Vercel)
 
-To learn more about Next.js, take a look at the following resources:
+- Repo is connected to Vercel; push to `main` to deploy.
+- In [Vercel → Project → Settings → Environment Variables](https://vercel.com/docs/projects/environment-variables), add all `NEXT_PUBLIC_FIREBASE_*` vars for Production (and Preview if needed), then redeploy.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Scripts
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` — Start dev server
+- `npm run build` — Production build
+- `npm run start` — Run production server locally
+- `npm run lint` — Run ESLint
