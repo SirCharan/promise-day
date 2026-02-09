@@ -1,26 +1,139 @@
 @import "tailwindcss";
 
+/* Google Fonts loaded in layout */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg-cream: #FFF8E7;
+  --stroke-brown: #4A3B2C;
+  --accent-pink: #FFB7C5;
+  --accent-blue: #C3E6F5;
+  --text-purple: #7986CB;
+  --text-pink-dark: #EC407A;
+  --white: #FFFFFF;
+  --shadow-hard: 3px 3px 0px var(--stroke-brown);
+  --shadow-soft: 0px 4px 15px rgba(74, 59, 44, 0.1);
+  --background: var(--bg-cream);
+  --foreground: var(--stroke-brown);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg-cream: var(--bg-cream);
+  --color-stroke-brown: var(--stroke-brown);
+  --color-accent-pink: var(--accent-pink);
+  --color-accent-blue: var(--accent-blue);
+  --color-text-purple: var(--text-purple);
+  --color-text-pink-dark: var(--text-pink-dark);
+  --font-sans: var(--font-nunito), sans-serif;
+  --font-display: var(--font-chewy), cursive;
+  --font-mono: var(--font-sniglet), cursive;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-cream);
+  font-family: 'Nunito', sans-serif;
+  color: var(--stroke-brown);
+  overflow-x: hidden;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Floating decor animation (match reference.html) */
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-15px) rotate(5deg); }
+}
+
+.decor-item {
+  position: absolute;
+  animation: floaty 6s ease-in-out infinite;
+}
+
+.decor-heart {
+  color: var(--accent-pink);
+  filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1));
+}
+
+.decor-star {
+  color: #FFD54F;
+  filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.1));
+}
+
+/* Promise card polaroid style */
+.promise-card:nth-child(even) {
+  transform: rotate(1deg);
+  background: #F0F4FF;
+}
+
+.promise-card:nth-child(odd) {
+  transform: rotate(-1deg);
+}
+
+.promise-card:active {
+  transform: scale(0.98);
+}
+
+/* Cloud input (bouncy cloud with ::before/::after bubbles) */
+.input-cloud-body::before,
+.input-cloud-body::after {
+  content: '';
+  position: absolute;
+  background: white;
+  border: 3px solid var(--stroke-brown);
+  border-bottom: none;
+  z-index: -1;
+}
+
+.input-cloud-body::before {
+  width: 80px;
+  height: 50px;
+  top: -40px;
+  left: 20px;
+  border-radius: 50px 50px 0 0;
+  border-left: 3px solid var(--stroke-brown);
+  border-right: 3px solid var(--stroke-brown);
+}
+
+.input-cloud-body::after {
+  width: 100px;
+  height: 60px;
+  top: -50px;
+  right: 30px;
+  border-radius: 60px 60px 0 0;
+  border-left: 3px solid var(--stroke-brown);
+  border-right: 3px solid var(--stroke-brown);
+}
+
+/* Submit button press effect */
+.submit-btn:active {
+  box-shadow: 0px 0px 0px var(--stroke-brown);
+  transform: translate(3px, 3px);
+}
+
+/* Card enter animation */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(var(--card-rotate, -1deg));
+  }
+}
+
+.card-enter {
+  animation: card-enter 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
