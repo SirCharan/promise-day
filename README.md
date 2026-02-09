@@ -5,7 +5,7 @@ A cute, whimsical web app for you and your person to share promises in a single 
 ## Tech Stack
 
 - **Next.js 16** (App Router) + React 19
-- **Tailwind CSS** + custom CSS (see `reference.html` for design system)
+- **Tailwind CSS 4** + custom CSS (see `reference.html` for design system)
 - **Firebase**: Anonymous Auth, Firestore (realtime), Analytics
 - **Fonts**: Chewy, Nunito, Sniglet (Google Fonts)
 
