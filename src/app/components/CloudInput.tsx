@@ -51,7 +51,7 @@ export function CloudInput({ owner, onOwnerChange, onSubmit }: CloudInputProps) 
                 : "bg-[#F5F5F5] text-[#AAA]"
             }`}
           >
-            Me (Her 💕)
+            Her 💕
           </button>
           <button
             type="button"
@@ -62,7 +62,7 @@ export function CloudInput({ owner, onOwnerChange, onSubmit }: CloudInputProps) 
                 : "bg-[#F5F5F5] text-[#AAA]"
             }`}
           >
-            Me (Him 💙)
+            Him 💙
           </button>
         </div>
         <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-3">
