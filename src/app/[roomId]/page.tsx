@@ -171,6 +171,7 @@ export default function RoomPage() {
       </main>
 
       <CloudInput
+        roomId={roomId}
         owner={owner}
         onOwnerChange={(o) => {
           setOwner(o);
