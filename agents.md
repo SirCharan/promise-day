@@ -14,7 +14,7 @@ Context for AI agents (e.g. Cursor) working on this repo.
 
 ## Tech Stack (Stick To It)
 
-- **Next.js** (App Router), **React 19**
+- **Next.js 16** (App Router), **React 19**
 - **Tailwind** + custom CSS variables from `reference.html`
 - **Firebase**: Anonymous Auth, Firestore (`rooms/{roomId}/promises`), Analytics (optional). Realtime via `onSnapshot`.
 - **Data**: `owner: "her" | "him"`, `text`, `createdAt`; room code = 6-char uppercase.

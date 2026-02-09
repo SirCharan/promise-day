@@ -45,6 +45,13 @@ Open [http://localhost:3000](http://localhost:3000). Create a room, share the co
 | `src/lib/firebase.ts` | Auth, Firestore, room code, realtime subscription |
 | `reference.html` | Design reference (styling, cloud, cards) |
 | `instructions.md` | Build guidelines for AI / contributors |
+| `agents.md` | Context for AI agents (Cursor, etc.) |
+
+## Documentation
+
+- **`instructions.md`** – Step-by-step build process, reference checklist, and UX/error-handling guidelines. Use when adding features or fixing bugs.
+- **`agents.md`** – Project context for AI assistants: tech stack, conventions, key paths, and “done” checklist.
+- **`reference.html`** – Single source of truth for styling (CSS variables, cloud input, promise cards, fonts, animations).
 
 ## Deploy (Vercel)
 
