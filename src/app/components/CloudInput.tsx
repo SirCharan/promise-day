@@ -1,12 +1,14 @@
 "use client";
 
-import { useState, useRef } from "react";
-import type { Owner } from "@/lib/firebase";
+import { useState, useRef, useEffect } from "react";
+import type { Owner, RoomNames } from "@/lib/firebase";
 
 interface CloudInputProps {
   roomId: string;
   owner: Owner;
+  names: RoomNames;
   onOwnerChange: (owner: Owner) => void;
+  onNamesChange: (names: Partial<RoomNames>) => void;
   onSubmit: (text: string) => void;
 }
 
@@ -19,10 +21,40 @@ function shareText(roomId: string): string {
   return `Join our promise room! Code: ${roomId}\n${shareUrl(roomId)}`;
 }
 
-export function CloudInput({ roomId, owner, onOwnerChange, onSubmit }: CloudInputProps) {
+const PencilIcon = () => (
+  <svg viewBox="0 0 24 24" className="h-4 w-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+  </svg>
+);
+
+export function CloudInput({ roomId, owner, names, onOwnerChange, onNamesChange, onSubmit }: CloudInputProps) {
   const [text, setText] = useState("");
   const [burst, setBurst] = useState(false);
+  const [editing, setEditing] = useState<Owner | null>(null);
+  const [editValue, setEditValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editHerRef = useRef<HTMLInputElement>(null);
+  const editHimRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (editing === "her") {
+      setEditValue(names.her);
+      editHerRef.current?.focus();
+    } else if (editing === "him") {
+      setEditValue(names.him);
+      editHimRef.current?.focus();
+    }
+  }, [editing, names.her, names.him]);
+
+  function saveEdit() {
+    if (editing === null) return;
+    const trimmed = editValue.trim();
+    if (trimmed) {
+      onNamesChange(editing === "her" ? { her: trimmed } : { him: trimmed });
+    }
+    setEditing(null);
+  }
 
   function handleShareWhatsApp() {
     const url = `https://wa.me/?text=${encodeURIComponent(shareText(roomId))}`;
@@ -91,28 +123,96 @@ export function CloudInput({ roomId, owner, onOwnerChange, onSubmit }: CloudInpu
           </div>
         </div>
         <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => onOwnerChange("her")}
-            className={`flex-1 rounded-[30px] border-2 border-[var(--stroke-brown)] px-4 py-3 text-center font-[family-name:var(--font-sniglet)] font-extrabold transition-all ${
+          <div
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-[30px] border-2 border-[var(--stroke-brown)] px-4 py-3 transition-all ${
               owner === "her"
-                ? "translate-x-[-1px] translate-y-[-1px] bg-[var(--accent-pink)] text-[var(--stroke-brown)] shadow-[2px_2px_0_var(--stroke-brown)]"
-                : "bg-[#F5F5F5] text-[#AAA]"
+                ? "translate-x-[-1px] translate-y-[-1px] bg-[var(--accent-pink)] shadow-[2px_2px_0_var(--stroke-brown)]"
+                : "bg-[#F5F5F5]"
             }`}
           >
-            Her 💕
-          </button>
-          <button
-            type="button"
-            onClick={() => onOwnerChange("him")}
-            className={`flex-1 rounded-[30px] border-2 border-[var(--stroke-brown)] px-4 py-3 text-center font-[family-name:var(--font-sniglet)] font-extrabold transition-all ${
+            {editing === "her" ? (
+              <input
+                ref={editHerRef}
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onBlur={saveEdit}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") saveEdit();
+                  if (e.key === "Escape") setEditing(null);
+                }}
+                className="max-w-[120px] rounded-lg border-2 border-[var(--stroke-brown)] bg-white px-2 py-1 font-[family-name:var(--font-sniglet)] font-extrabold text-[var(--stroke-brown)] outline-none"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onOwnerChange("her")}
+                  className={`flex-1 font-[family-name:var(--font-sniglet)] font-extrabold ${owner === "her" ? "text-[var(--stroke-brown)]" : "text-[#AAA]"}`}
+                >
+                  {names.her} 💕
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditing("her");
+                  }}
+                  className="rounded-full p-1 transition hover:bg-black/10"
+                  title="Edit name"
+                  aria-label={`Edit ${names.her} name`}
+                >
+                  <PencilIcon />
+                </button>
+              </>
+            )}
+          </div>
+          <div
+            className={`flex flex-1 items-center justify-center gap-1.5 rounded-[30px] border-2 border-[var(--stroke-brown)] px-4 py-3 transition-all ${
               owner === "him"
-                ? "translate-x-[-1px] translate-y-[-1px] bg-[var(--accent-blue)] text-[var(--stroke-brown)] shadow-[2px_2px_0_var(--stroke-brown)]"
-                : "bg-[#F5F5F5] text-[#AAA]"
+                ? "translate-x-[-1px] translate-y-[-1px] bg-[var(--accent-blue)] shadow-[2px_2px_0_var(--stroke-brown)]"
+                : "bg-[#F5F5F5]"
             }`}
           >
-            Him 💙
-          </button>
+            {editing === "him" ? (
+              <input
+                ref={editHimRef}
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                onBlur={saveEdit}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") saveEdit();
+                  if (e.key === "Escape") setEditing(null);
+                }}
+                className="max-w-[120px] rounded-lg border-2 border-[var(--stroke-brown)] bg-white px-2 py-1 font-[family-name:var(--font-sniglet)] font-extrabold text-[var(--stroke-brown)] outline-none"
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onOwnerChange("him")}
+                  className={`flex-1 font-[family-name:var(--font-sniglet)] font-extrabold ${owner === "him" ? "text-[var(--stroke-brown)]" : "text-[#AAA]"}`}
+                >
+                  {names.him} 💙
+                </button>
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditing("him");
+                  }}
+                  className="rounded-full p-1 transition hover:bg-black/10"
+                  title="Edit name"
+                  aria-label={`Edit ${names.him} name`}
+                >
+                  <PencilIcon />
+                </button>
+              </>
+            )}
+          </div>
         </div>
         <form onSubmit={handleSubmit} className="mt-3 flex flex-col gap-3">
           <textarea

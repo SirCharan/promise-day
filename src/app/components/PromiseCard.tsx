@@ -1,18 +1,20 @@
 "use client";
 
-import type { PromiseDoc } from "@/lib/firebase";
+import type { PromiseDoc, RoomNames } from "@/lib/firebase";
 
 interface PromiseCardProps {
   promise: PromiseDoc;
   index: number;
+  names: RoomNames;
   isOptimistic?: boolean;
 }
 
-export function PromiseCard({ promise, index, isOptimistic }: PromiseCardProps) {
+export function PromiseCard({ promise, index, names, isOptimistic }: PromiseCardProps) {
   const isHer = promise.owner === "her";
   const avatarBg = isHer ? "var(--accent-pink)" : "var(--accent-blue)";
-  const initial = isHer ? "K" : "J";
-  const name = isHer ? "Her Promise" : "His Promise";
+  const displayName = isHer ? names.her : names.him;
+  const initial = (displayName.trim().charAt(0) || "H").toUpperCase();
+  const name = isHer ? `${names.her}'s Promise` : `${names.him}'s Promise`;
   const sticker = promise.id.charCodeAt(0) % 2 === 0 ? "heart" : "star";
   const rotateClass = index % 2 === 0 ? "rotate-[-1deg]" : "rotate-[1deg]";
   const bgClass = index % 2 === 0 ? "bg-white" : "bg-[#F0F4FF]";

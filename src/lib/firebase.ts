@@ -81,16 +81,28 @@ export interface PromiseDoc {
   createdAt: Timestamp;
 }
 
-export async function createRoom(roomId: string): Promise<void> {
+export interface RoomNames {
+  her: string;
+  him: string;
+}
+
+export const DEFAULT_ROOM_NAMES: RoomNames = { her: "Her", him: "Him" };
+
+export function roomRef(roomId: string): DocumentReference {
   const db = getFirebaseDb();
-  const roomRef = doc(db, "rooms", roomId.toUpperCase());
-  await setDoc(roomRef, { createdAt: serverTimestamp() });
+  return doc(db, "rooms", roomId.toUpperCase());
+}
+
+export async function createRoom(roomId: string): Promise<void> {
+  await setDoc(roomRef(roomId), {
+    createdAt: serverTimestamp(),
+    nameHer: DEFAULT_ROOM_NAMES.her,
+    nameHim: DEFAULT_ROOM_NAMES.him,
+  });
 }
 
 export async function roomExists(roomId: string): Promise<boolean> {
-  const db = getFirebaseDb();
-  const roomRef = doc(db, "rooms", roomId.toUpperCase());
-  const snap = await getDoc(roomRef);
+  const snap = await getDoc(roomRef(roomId));
   return snap.exists();
 }
 
@@ -137,4 +149,36 @@ export function subscribePromises(
       onUpdate([]);
     }
   );
+}
+
+export function subscribeRoom(
+  roomId: string,
+  onUpdate: (names: RoomNames) => void
+): Unsubscribe {
+  const ref = roomRef(roomId);
+  return onSnapshot(
+    ref,
+    (snap) => {
+      const data = snap.data();
+      onUpdate({
+        her: (data?.nameHer as string) ?? DEFAULT_ROOM_NAMES.her,
+        him: (data?.nameHim as string) ?? DEFAULT_ROOM_NAMES.him,
+      });
+    },
+    (err) => {
+      console.error("Firestore room subscribe error:", err);
+      onUpdate(DEFAULT_ROOM_NAMES);
+    }
+  );
+}
+
+export async function updateRoomNames(
+  roomId: string,
+  names: Partial<RoomNames>
+): Promise<void> {
+  const ref = roomRef(roomId);
+  const updates: Record<string, string> = {};
+  if (names.her !== undefined) updates.nameHer = names.her;
+  if (names.him !== undefined) updates.nameHim = names.him;
+  await setDoc(ref, updates, { merge: true });
 }

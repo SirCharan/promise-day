@@ -5,10 +5,14 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import {
   ensureAnonymousAuth,
   subscribePromises,
+  subscribeRoom,
   addPromise as addPromiseToFirestore,
+  updateRoomNames,
   roomExists,
+  DEFAULT_ROOM_NAMES,
   type PromiseDoc,
   type Owner,
+  type RoomNames,
 } from "@/lib/firebase";
 import { RoomDecor } from "../components/RoomDecor";
 import { PromiseCard } from "../components/PromiseCard";
@@ -33,6 +37,7 @@ export default function RoomPage() {
   const router = useRouter();
   const roomId = (params?.roomId as string)?.toUpperCase() ?? "";
   const [owner, setOwner] = useState<Owner>("her");
+  const [roomNames, setRoomNames] = useState<RoomNames>(DEFAULT_ROOM_NAMES);
   const [promises, setPromises] = useState<PromiseDoc[]>([]);
   const [ready, setReady] = useState(false);
   const [roomValid, setRoomValid] = useState<boolean | null>(null);
@@ -80,6 +85,12 @@ export default function RoomPage() {
     const unsub = subscribePromises(roomId, (next) => {
       setPromises(next);
     });
+    return () => unsub();
+  }, [roomId, roomValid]);
+
+  useEffect(() => {
+    if (!roomId || roomId.length !== 6 || !roomValid) return;
+    const unsub = subscribeRoom(roomId, (names) => setRoomNames(names));
     return () => unsub();
   }, [roomId, roomValid]);
 
@@ -163,6 +174,7 @@ export default function RoomPage() {
                 key={p.id}
                 promise={p}
                 index={i}
+                names={roomNames}
                 isOptimistic={optimisticIds.current.has(p.id)}
               />
             ))
@@ -173,9 +185,15 @@ export default function RoomPage() {
       <CloudInput
         roomId={roomId}
         owner={owner}
+        names={roomNames}
         onOwnerChange={(o) => {
           setOwner(o);
           setStoredOwner(o);
+        }}
+        onNamesChange={(names) => {
+          updateRoomNames(roomId, names).catch(() =>
+            setError("Couldn’t save names. Try again 💕")
+          );
         }}
         onSubmit={(text) => handleNewPromise(text, owner)}
       />
