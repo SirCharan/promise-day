@@ -143,6 +143,13 @@ export default function RoomPage() {
     <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-[var(--bg-cream)]">
       <RoomDecor />
       <header className="relative z-[2] px-4 pt-6 pb-2 text-center">
+        <img
+          src="/promise-day-logo.png"
+          alt="Promise Day"
+          className="mx-auto mb-2 h-14 w-auto object-contain sm:h-16"
+          width={160}
+          height={80}
+        />
         <h1
           className="font-[family-name:var(--font-chewy)] text-3xl text-[var(--text-purple)] sm:text-4xl"
           style={{
