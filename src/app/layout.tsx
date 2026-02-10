@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Chewy, Nunito, Sniglet } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const chewy = Chewy({
@@ -79,6 +80,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased">
         {children}
+        <Analytics />
       </body>
     </html>
   );
