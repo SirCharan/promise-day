@@ -60,6 +60,13 @@ export default function Home() {
     <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-[var(--bg-cream)]">
       <LandingDecor />
       <main className="relative z-10 flex flex-1 flex-col items-center justify-center px-6 py-12">
+        <img
+          src="/promise-day-logo.png"
+          alt="Promise Day"
+          className="mb-4 h-20 w-auto object-contain sm:h-24"
+          width={192}
+          height={96}
+        />
         <h1
           className="font-[family-name:var(--font-chewy)] text-4xl text-[var(--text-purple)] drop-shadow-sm sm:text-5xl"
           style={{
